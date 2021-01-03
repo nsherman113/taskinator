@@ -1,7 +1,18 @@
 var saveTasks = function() {
 localStorage.setItem("tasks", JSON.stringify(tasks));
 }
-
+ var loadTasks = function(){
+  localStorage.getItem("tasks", JSON.stringify(tasks));
+  if (!savedTasks) {
+    return false;
+  }
+  console.log("Saved tasks found")
+  var savedTasks = JSON.parse(savedTasks);
+  for (var i = 0; i < savedTasks.length; i++) {
+    // pass each task object into the `createTaskEl()` function
+    createTaskEl(savedTasks[i]);
+  }
+};
 var tasks = [];
 
 var taskIdCounter = 0;
@@ -169,7 +180,7 @@ for (var i = 0; i < tasks.length; i++) {
   }
   saveTasks();
 }
-console.log(tasks);
+
 
 var editTask = function(taskId) {
   console.log(taskId);
@@ -208,6 +219,7 @@ for (var i = 0; i < tasks.length; i++) {
     updatedTaskArr.push(tasks[i]);
   }
   saveTasks();
+  alert("task deleted!");
 }
 
 // reassign tasks array to be the same as updatedTaskArr
@@ -241,9 +253,9 @@ var dropTaskHandler = function(event) {
   else if (statusType === "tasks-completed") {
     statusSelectEl.selectedIndex = 2;
   }
+  saveTasks();
   dropZoneEl.appendChild(draggableElement);
   dropZoneEl.removeAttribute("style");
-  saveTasks();
   };
   var dragLeaveHandler = function(event) {
     var taskListEl = event.target.closest(".task-list");
@@ -255,9 +267,33 @@ var dropTaskHandler = function(event) {
       tasks[i].status = statusSelectEl.value.toLowerCase();
     }
   }
-  
-  
 }
+var saveTasks = function() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  console.log("tasks saved");
+};
+
+var loadTasks = function() {
+  var savedTasks = localStorage.getItem("tasks");
+  // if there are no tasks, set tasks to an empty array and return out of the function
+  if (!savedTasks) {
+    return false;
+  }
+  console.log("Saved tasks found!");
+  // else, load up saved tasks
+
+  // parse into array of objects
+  savedTasks = JSON.parse(savedTasks);
+
+  // loop through savedTasks array
+  for (var i = 0; i < savedTasks.length; i++) {
+    // pass each task object into the `createTaskEl()` function
+    createTaskEl(savedTasks[i]);
+  }
+};
+  
+  
+
 
 // Create a new task
 formEl.addEventListener("submit", taskFormHandler);
@@ -271,3 +307,4 @@ pageContentEl.addEventListener("dragstart", dragTaskHandler);
 pageContentEl.addEventListener("dragover", dropZoneDragHandler);
 pageContentEl.addEventListener("drop", dropTaskHandler);
 pageContentEl.addEventListener("dragleave", dragLeaveHandler);
+loadTasks();
